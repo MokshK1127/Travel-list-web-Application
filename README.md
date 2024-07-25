@@ -1,70 +1,232 @@
-# Getting Started with Create React App
+# Travel List Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Project Description
+This is a simple travel-list application built with React. It helps users manage and organize items they need to pack for a trip. Users can add, delete, and toggle the packed status of items. The app also provides statistics on the number of items packed and remaining.
 
-## Available Scripts
+## Features
+- Add items with descriptions and quantities.
+- Toggle the packed status of each item.
+- Delete items from the list.
+- Sort items by input order, description, or packed status.
+- Clear the entire list of items.
+- View packing statistics.
 
-In the project directory, you can run:
+## Getting Started
+This project was bootstrapped with Create React App.
 
-### `npm start`
+### Prerequisites
+Make sure you have Node.js and npm installed on your machine. You can download them from Node.js.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Installation
+Clone the repository:  
+`git clone https://github.com/your-username/travel-list-app.git`  
+`cd travel-list-app`
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Install the dependencies:  
+`npm install`
 
-### `npm test`
+### Running the App
+To start the development server, run:  
+`npm start`  
+Open http://localhost:3000 to view the app in your browser. The page will reload when you make changes. You may also see any lint errors in the console.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Running Tests
+To launch the test runner in interactive watch mode, run:  
+`npm test`  
+See the section about running tests for more information.
 
-### `npm run build`
+### Building for Production
+To build the app for production, run:  
+`npm run build`  
+This builds the app for production to the build folder. It correctly bundles React in production mode and optimizes the build for the best performance. The build is minified and the filenames include the hashes. Your app is ready to be deployed! See the section about deployment for more information.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Ejecting
+Note: this is a one-way operation. Once you eject, you can't go back! If you aren't satisfied with the build tool and configuration choices, you can eject at any time. This command will remove the single build dependency from your project.  
+`npm run eject`  
+This will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc.) right into your project so you have full control over them. At this point you're on your own.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Learn More
+You can learn more in the Create React App documentation. To learn React, check out the React documentation.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Additional Resources
+- Code Splitting
+- Analyzing the Bundle Size
+- Making a Progressive Web App
+- Advanced Configuration
+- Deployment
+- Troubleshooting npm run build failures
 
-### `npm run eject`
+## Code Overview
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### App.js
+Import the necessary components and hooks from React:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+import { useState } from "react";
+import Logo from "./logo";
+import Form from "./Form";
+import PackingList from "./PackingList";
+import Stats from "./Stats";
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Create the main App component:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+export default function App() {
+  const [items, setItems] = useState([]);
 
-## Learn More
+  function clearList() {
+    const confirmed = window.confirm("Are you sure you want to delete all items?");
+    if (confirmed) {
+      setItems([]);
+    }
+  }
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+  function handleAddIems(item) {
+    setItems((items) => [...items, item]);
+  }
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+  function handleDeleteItem(id) {
+    setItems((items) => items.filter((item) => item.id !== id));
+  }
 
-### Code Splitting
+  function handleTogglitems(id) {
+    setItems((items) =>
+      items.map((item) =>
+        item.id === id ? { ...item, packed: !item.packed } : item
+      )
+    );
+  }
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+  return (
+    <div className="app">
+      <Logo />
+      <Form onAddItems={handleAddIems} />
+      <PackingList
+        items={items}
+        onDeleteItems={handleDeleteItem}
+        onToggleItems={handleTogglitems}
+        onClearItems={clearList}
+      />
+      <Stats items={items} />
+    </div>
+  );
+}
 
-### Analyzing the Bundle Size
+### Form.js
+Import the necessary hooks from React:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+import { useState } from "react";
 
-### Making a Progressive Web App
+Create the Form component:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+export default function Form({ onAddItems }) {
+  const [description, setDescription] = useState(" ");
+  const [quantity, setQuantity] = useState(1);
 
-### Advanced Configuration
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (description === " ") return;
+    const newItem = { description, quantity, packed: false, id: Date.now() };
+    console.log(newItem);
+    onAddItems(newItem);
+    setDescription(" ");
+    setQuantity(1);
+  }
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+  return (
+    <form className="add-form" onClick={handleSubmit}>
+      <h3>What do you need for your 🥰 trip</h3>
+      <select value={quantity} onChange={(e) => setQuantity(Number(e.target.value))}>
+        {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+          <option value={num} key={num}>{num}</option>
+        ))}
+      </select>
+      <input type="text" placeholder="Item..." value={description} onChange={(e) => setDescription(e.target.value)} />
+      <button>Add</button>
+    </form>
+  );
+}
 
-### Deployment
+### Item.js
+Create the Item component:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+export default function Item({ item, onDeleteItems, onToggleItem }) {
+  return (
+    <li>
+      <input type="checkbox" value={item.packed} onChange={() => onToggleItem(item.id)} />
+      <span style={item.packed ? { textDecoration: "line-through" } : {}}>
+        {item.quantity} {item.description}
+      </span>
+      <button onClick={() => onDeleteItems(item.id)}>❌&times</button>
+    </li>
+  );
+}
 
-### `npm run build` fails to minify
+### Logo.js
+Create the Logo component:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+export default function Logo() {
+  return <h1>🌴 Far Away 💼</h1>;
+}
+
+### PackingList.js
+Import the necessary hooks and components:
+
+import { useState } from "react";
+import Item from "./Item";
+
+Create the PackingList component:
+
+export default function PackingList({ items, onDeleteItems, onToggleItems, onClearItems }) {
+  const [sortBy, setSortBy] = useState("input");
+  let sortedItems;
+
+  if (sortBy === "input") {
+    sortedItems = items;
+  }
+  if (sortBy === "description") {
+    sortedItems = items.slice().sort((a, b) => a.description.localeCompare(b.description));
+  }
+  if (sortBy === "packed") {
+    sortedItems = items.slice().sort((a, b) => Number(a.packed) - Number(b.packed));
+  }
+  return (
+    <div className="list">
+      <ul>
+        {sortedItems.map((item) => (
+          <Item item={item} onDeleteItems={onDeleteItems} onToggleItem={onToggleItems} key={item.id} />
+        ))}
+      </ul>
+      <div className="actions">
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <option value="input">Sort by input order</option>
+          <option value="description">Sort by description</option>
+          <option value="packed">Sort by packed status</option>
+        </select>
+        <button onClick={() => onClearItems()}>Clear list</button>
+      </div>
+    </div>
+  );
+}
+
+### Stats.js
+Create the Stats component:
+
+export default function Stats({ items }) {
+  if (!items.length)
+    return (
+      <p className="stats">
+        <em>Start adding some items to your packing list 🚀</em>
+      </p>
+    );
+  const numItems = items.length;
+  const numPacked = items.filter((item) => item.packed).length;
+  const percentage = Math.round((numPacked / numItems) * 100);
+  return (
+    <footer className="stats">
+      <em>
+        {percentage === 100
+          ? "You got everything! Ready to go ✈️"
+          : `You have ${numItems} items on your list, and you already packed ${numPacked} (${percentage}%)`}
+      </em>
+    </footer>
+  );
+}
